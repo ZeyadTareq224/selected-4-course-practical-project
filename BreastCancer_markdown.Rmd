@@ -1,0 +1,93 @@
+---
+title: "Breastcancer_markdown"
+author: "me"
+date: "5/18/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+df = read.csv(file.choose(), header = T, stringsAsFactors = FALSE)
+# remove the id column
+df = df[, -1]
+
+# replace "?" with NA values
+df[df == "?"] = NA
+
+# observe the NA values in the dataframe
+any(is.na(df))
+colSums(is.na(df))
+
+
+# convert dataframe to numeric for further analysis
+sapply(df, class)
+df[] = sapply(df, as.numeric)
+sapply(df, class)
+
+# replace the NA values with the mean of the bare_nuclei column
+df$bare_nuclei[is.na(df$bare_nuclei)] <- mean(df$bare_nuclei, na.rm = TRUE)
+any(is.na(df))
+
+# conver the class column to character type and replace 2 with B and 4 with M
+
+df$class[df$class == 2] = 0
+df$class[df$class == 4] = 1
+
+# spliting the data into training and testing data sets
+# df_train = df[1:599, ]
+# df_test = df[600:699, ]
+# df_train_labels = df$class[1:599]
+# df_test_labels = df$class[600:699]
+
+# training the model on the data
+
+data_train = df[1:450,]
+data_test = df[451:699,]
+
+dim(data_train)
+
+# fittin the model
+formula = class ~ .
+model = glm(formula, data=data_train, family=binomial())
+summary(model)
+
+
+#generate the confusion matrix
+predict = predict(model, data_test, type = 'response')
+table_mat = table(data_test$class, predict > 0.5)
+table_mat
+
+# accuracy test
+accuracy_Test = sum(diag(table_mat)) / sum(table_mat)
+accuracy_Test
+
+# applying K-Fold Cross Validation
+#install.packages('caret')
+library(caret)
+folds = createFolds(data_train$class, k=10)
+cv = lapply(folds, function(x){
+  training_folds = data_train[-x, ]
+  test_folds = data_train[x, ]
+  
+  formula = class ~ .
+  model = glm(formula, data=training_folds, family=binomial())
+  predict = predict(model, test_folds, type = 'response')
+  table_mat = table(test_folds$class, predict > 0.5)
+  accuracy = sum(diag(table_mat)) / sum(table_mat)
+  return(accuracy)
+})
+
+final_accuracy = mean(as.numeric(cv))
+
+
+```
+
