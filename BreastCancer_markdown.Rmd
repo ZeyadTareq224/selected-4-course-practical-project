@@ -20,6 +20,8 @@ df = read.csv(file.choose(), header = T, stringsAsFactors = FALSE)
 # remove the id column
 df = df[, -1]
 
+#col names
+columns = names(df)
 # replace "?" with NA values
 df[df == "?"] = NA
 
@@ -39,19 +41,20 @@ any(is.na(df))
 
 # conver the class column to character type and replace 2 with B and 4 with M
 
+
+
+
 df$class[df$class == 2] = 0
 df$class[df$class == 4] = 1
 
-# spliting the data into training and testing data sets
-# df_train = df[1:599, ]
-# df_test = df[600:699, ]
-# df_train_labels = df$class[1:599]
-# df_test_labels = df$class[600:699]
+
 
 # training the model on the data
 
 data_train = df[1:450,]
 data_test = df[451:699,]
+
+
 
 dim(data_train)
 
@@ -62,7 +65,7 @@ summary(model)
 
 
 #generate the confusion matrix
-predict = predict(model, data_test, type = 'response')
+predicted = predict(model, data_test, type = 'response')
 table_mat = table(data_test$class, predict > 0.5)
 table_mat
 
@@ -87,6 +90,47 @@ cv = lapply(folds, function(x){
 })
 
 final_accuracy = mean(as.numeric(cv))
+
+#plot logistic regression curve
+ggplot(df, aes(x=clump_thickness, y=class)) + 
+  geom_point(alpha=.5) +
+  stat_smooth(method="glm", se=FALSE, method.args = list(family=binomial))
+
+
+
+ggplot(df, aes(x=uniformity_of_cell_size, y=class)) + 
+  geom_point(alpha=.5) +
+  stat_smooth(method="glm", se=FALSE, method.args = list(family=binomial))
+
+ggplot(df, aes(x=uniformity_of_cell_shape, y=class)) + 
+  geom_point(alpha=.5) +
+  stat_smooth(method="glm", se=FALSE, method.args = list(family=binomial))
+
+ggplot(df, aes(x=marginal_adhesion, y=class)) + 
+  geom_point(alpha=.5) +
+  stat_smooth(method="glm", se=FALSE, method.args = list(family=binomial))
+
+ggplot(df, aes(x=single_epithelial_cell_size, y=class)) + 
+  geom_point(alpha=.5) +
+  stat_smooth(method="glm", se=FALSE, method.args = list(family=binomial))
+
+ggplot(df, aes(x=bare_nuclei, y=class)) + 
+  geom_point(alpha=.5) +
+  stat_smooth(method="glm", se=FALSE, method.args = list(family=binomial))
+
+ggplot(df, aes(x=bland_chromatin, y=class)) + 
+  geom_point(alpha=.5) +
+  stat_smooth(method="glm", se=FALSE, method.args = list(family=binomial))
+
+ggplot(df, aes(x=normal_nucleoli, y=class)) + 
+  geom_point(alpha=.5) +
+  stat_smooth(method="glm", se=FALSE, method.args = list(family=binomial))
+
+ggplot(df, aes(x=mitoses, y=class)) + 
+  geom_point(alpha=.5) +
+  stat_smooth(method="glm", se=FALSE, method.args = list(family=binomial))
+
+
 
 
 ```
