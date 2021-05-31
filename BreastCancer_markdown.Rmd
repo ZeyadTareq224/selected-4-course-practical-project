@@ -90,11 +90,60 @@ cv = lapply(folds, function(x){
 })
 
 final_accuracy = mean(as.numeric(cv))
+print(columns)
+install.packages('cowplot')
+library(cowplot)
+#######################################
+predicted.data1 <- data.frame(
+  probability.of.bc=model$fitted.values,
+  clump_thickness=data_train$clump_thickness)
 
-#plot logistic regression curve
-ggplot(df, aes(x=clump_thickness, y=class)) + 
-  geom_point(alpha=.5) +
-  stat_smooth(method="glm", se=FALSE, method.args = list(family=binomial))
+ggplot(data=predicted.data1, aes(x=clump_thickness, y=probability.of.bc)) +
+  geom_point(aes(color=clump_thickness), size=5) +
+  xlab("clump_thickness") +
+  ylab("Predicted probability of getting heart disease")
+########################################
+
+######################################
+predicted.data2 <- data.frame(
+  probability.of.bc=model$fitted.values,
+  uniformity_of_cell_size=data_train$uniformity_of_cell_size)
+
+ggplot(data=predicted.data2, aes(x=uniformity_of_cell_size, y=probability.of.bc)) +
+  geom_point(aes(color=uniformity_of_cell_size), size=5) +
+  xlab("uniformity_of_cell_size") +
+  ylab("Predicted probability of getting heart disease")
+########################################
+
+######################################
+predicted.data3 <- data.frame(
+  probability.of.bc=model$fitted.values,
+  uniformity_of_cell_shape=data_train$uniformity_of_cell_shape)
+
+ggplot(data=predicted.data3, aes(x=uniformity_of_cell_shape, y=probability.of.bc)) +
+  geom_point(aes(color=uniformity_of_cell_shape), size=5) +
+  xlab("uniformity_of_cell_shape") +
+  ylab("Predicted probability of getting heart disease")
+########################################
+
+
+######################################
+predicted.data4 <- data.frame(
+  probability.of.bc=model$fitted.values,
+  marginal_adhesion=data_train$marginal_adhesion)
+
+ggplot(data=predicted.data4, aes(x=marginal_adhesion, y=probability.of.bc)) +
+  geom_point(aes(color=marginal_adhesion), size=5) +
+  xlab("marginal_adhesion") +
+  ylab("Predicted probability of getting heart disease")
+########################################
+
+
+
+
+
+
+
 
 
 
